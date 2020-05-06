@@ -4,12 +4,32 @@ const Udb = require('./userDb.js');
 const router = express.Router();
 
 
-router.post('/', (req, res) => {
+router.post('/api/posts', (req, res) => {
   // do your magic!
+  Udb.insert(req.body)
+  .then(udb => {
+    res.status(201).json(udb);
+  })
+  .catch(error => {
+    console.log(error);
+    res.status(500).json({
+        error: "There was an error while saving the post to the database" ,
+    });
+  });
 });
 
 router.post('/:id/posts', (req, res) => {
   // do your magic!
+  Udb.insert(req.body)
+  .then(udb => {
+    res.status(201).json(udb);
+  })
+  .catch(error => {
+    console.log(error);
+    res.status(404).json({
+        message: "The post with the specified ID does not exist."  ,
+    });
+  });
 });
 
 router.get('/', (req, res) => {
