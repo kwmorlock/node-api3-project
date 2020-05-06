@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get("/api/posts", (req, res) => {
   // do your magic!
-  Db.find(req.query)
+  Db.find()
   .then(db => {
     res.status(200).json(db);
   })
@@ -54,8 +54,23 @@ router.delete("/api/posts/:id", (req, res) => {
       });
 });
 
-router.put('/:id', (req, res) => {
+router.put("/api/posts/:id", (req, res) => {
   // do your magic!
+  const changes = req.body;
+    Db.update(req.params.id, changes)
+      .then(db => {
+        if (db) {
+          res.status(200).json(db);
+        } else {
+          res.status(404).json({ message: "The post with the specified ID does not exist." });
+        }
+      })
+      .catch(error => {
+        console.log(error);
+        res.status(500).json({
+            error: "The post information could not be modified.",
+        });
+      });
 });
 
 // custom middleware
