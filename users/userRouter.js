@@ -98,24 +98,42 @@ router.delete('/:id', validateUserId, (req, res) => {
   });
 });
 
-router.put('/:id', validateUserId, validateUser, (req, res) => {
-  // do your magic!
-  const changes = req.body;
-  Udb.update(req.params.id, changes)
-    .then(udb => {
-      if (udb) {
-        res.status(200).json(udb);
-      } else {
-        res.status(404).json({ message: "The post with the specified ID does not exist." });
-      }
-    })
-    .catch(error => {
-      console.log(error);
-      res.status(500).json({
-          error: "The post information could not be modified.",
-      });
-    });
+// router.put('/:id', validateUserId,validateUser, (req, res) => {
+//   // do your magic!
+//   // const changes = req.body;
+//   Udb.update(id, req.body)
+//     .then((updated) => {
+//       if (updated === 1) {
+//         res.status(200).send();
+//       } else {
+//         res.status(404).json({ message: "The post with the specified ID does not exist." });
+//       }
+//     })
+//     .catch(error => {
+//       console.log(error);
+//       res.status(500).json({
+//           error: "The post information could not be modified."
+//       });
+//     });
+// });
+
+router.put("/:id", validateUserId, (req, res) => {
+  console.log(req.body)
+  Udb.update(Number(req.params.id), req.body)
+  .then(result => {
+    if (result === 1) {
+      res.status(204).send()
+    } else {
+      res.status(500).json({ error: "error updating record" })
+    }
+  })
+  .catch((err) => {
+    console.log(err)
+    res.status(500).json({ error: "error connecting to database" });
+  });
 });
+
+
 
 //custom middleware
 
@@ -126,8 +144,7 @@ Udb.getById(req.params.id)
   if(user) {
     req.user = user;
     next();
-
-  }else{
+  }else {
     res.status(400).json({
       message: "The id does not exist",
     })

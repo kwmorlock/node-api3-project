@@ -5,12 +5,22 @@ const userRouter = require('./users/userRouter');
 
 const server = express();
 
-server.use("/api/posts", postRouter );
-server.use("/api/users", userRouter);
-server.use(logger);
-//maybe out loggers in these
+//order is supppppppppper important the logger needs to go before the api/posts
+//wont work if in wrong order!!!!!!!!!!!!!!
+
+//middlwares get called in order, super important in redux also
 
 server.use(express.json())
+server.use(logger);
+
+//!!!!!!!!!!!!!!
+
+server.use("/api/posts", postRouter );
+server.use("/api/users", userRouter);
+
+//maybe out loggers in these
+
+
 
 server.get('/', (req, res) => {
   res.send(`<h2>Let's write some middleware!</h2>`);
