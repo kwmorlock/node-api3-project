@@ -4,7 +4,7 @@ const Udb = require('./userDb.js');
 const router = express.Router();
 
 
-router.post('/api/posts', (req, res) => {
+router.post('/', validateUser, (req, res) => {
   // do your magic!
   Udb.insert(req.body)
   .then(udb => {
@@ -18,7 +18,7 @@ router.post('/api/posts', (req, res) => {
   });
 });
 
-router.post('/:id/posts', (req, res) => {
+router.post('/:id/posts', validateUserId, validatePost, (req, res) => {
   // do your magic!
   Udb.insert(req.body)
   .then(udb => {
@@ -44,7 +44,7 @@ router.get('/', (req, res) => {
   });
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', validateUserId, (req, res) => {
   // do your magic!
   Udb.getById(req.params.id)
   .then(udb => {
@@ -62,7 +62,7 @@ router.get('/:id', (req, res) => {
   });
 });
 
-router.get('/:id/posts', (req, res) => {
+router.get('/:id/posts', validateUserId, (req, res) => {
   // do your magic!
   Udb.getUserPosts(req.params.id)
   .then(messages => {
@@ -78,7 +78,7 @@ router.get('/:id/posts', (req, res) => {
   });
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', validateUserId, (req, res) => {
   // do your magic!
   Udb.remove(req.params.id)
   .then(count => {
@@ -96,7 +96,7 @@ router.delete('/:id', (req, res) => {
   });
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', validateUserId, validateUser, (req, res) => {
   // do your magic!
   const changes = req.body;
   Udb.update(req.params.id, changes)
@@ -119,6 +119,18 @@ router.put('/:id', (req, res) => {
 
 function validateUserId(req, res, next) {
   // do your magic!
+Udb.getById(req.params.id)
+.then((user) => {
+  if(user) {
+    req.user = user;
+    next();
+
+  }else{
+    res.status(400).json({
+      message: "The id does not exist",
+    })
+  }
+})
 }
 
 function validateUser(req, res, next) {

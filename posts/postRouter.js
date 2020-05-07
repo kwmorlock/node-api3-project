@@ -18,7 +18,7 @@ router.get("/api/posts", (req, res) => {
   });
 });
 
-router.get("/api/users/:id", (req, res) => {
+router.get("/api/users/:id", validatePostId, (req, res) => {
   // do your magic!
   Db.getById(req.params.id)
   .then(db => {
