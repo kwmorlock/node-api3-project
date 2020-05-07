@@ -20,14 +20,16 @@ router.post('/', validateUser, (req, res) => {
 
 router.post('/:id/posts', validateUserId, validatePost, (req, res) => {
   // do your magic!
-  Udb.insert(req.body)
-  .then(udb => {
-    res.status(201).json(udb);
+  const post = req.body
+  post.user_id = Number(req.params.id)
+  Udb.insert(post)
+  .then((newPost) => {
+    res.status(200).json(newPost);
   })
   .catch(error => {
     console.log(error);
-    res.status(404).json({
-        message: "The post with the specified ID does not exist."  ,
+    res.status(500).json({
+        message: "Error saving."  ,
     });
   });
 });
@@ -131,14 +133,40 @@ Udb.getById(req.params.id)
     })
   }
 })
+.catch((error) =>{
+  console.log(error);
+  res
+  .status(500)
+  .json({
+    error: "comments cant be retrieved"
+  })
+})
 }
 
 function validateUser(req, res, next) {
   // do your magic!
+  if (Object.keys(req.body).length !== 0) {
+    // if the length is not equal to zero than its a valid user
+    //keys return an array of strings?
+    req.body.name
+      ? next()
+      : res.status(400).json({ error: "provide name for the user." });
+  } else {
+    res.status(400).json({ error: "missing data" });
+  }
 }
 
 function validatePost(req, res, next) {
   // do your magic!
+  if (Object.keys(req.body).length !== 0) {
+    //if the length is not to zero than its a valid post
+    req.body.text
+      ? next()
+      : res.status(400).json({ error: " provide text for the post." });
+  } else {
+    res.status(400).json({ error: "missing data" });
+  }
+
 }
 
 module.exports = router;
