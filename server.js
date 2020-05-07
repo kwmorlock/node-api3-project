@@ -7,6 +7,7 @@ const server = express();
 
 server.use("/api/posts", postRouter );
 server.use("/api/users", userRouter);
+server.use(logger);
 //maybe out loggers in these
 
 server.use(express.json())
@@ -35,6 +36,6 @@ console.log(Date.now());
 next();
 }
 
-server.use(logger);
+
 
 module.exports = server;
